@@ -1,0 +1,12 @@
+main\java\model\base\BaseModel.class
+main\java\dao\interfaces\UserDao.class
+main\java\model\rest\RestAddNote.class
+main\java\util\HibernateUtil.class
+main\java\model\User.class
+main\java\dao\interfaces\NoteDao.class
+main\java\dao\impl\UserDaoImpl.class
+main\java\model\rest\RestUpdateNote.class
+main\java\validator\EmailValidator.class
+main\java\model\Note.class
+main\java\service\NoteService.class
+main\java\dao\impl\NoteDaoImpl.class

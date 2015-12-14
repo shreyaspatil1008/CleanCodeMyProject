@@ -1,0 +1,12 @@
+C:\project\CleanCode\MyProject-master\src\main\java\model\Note.java
+C:\project\CleanCode\MyProject-master\src\main\java\dao\impl\NoteDaoImpl.java
+C:\project\CleanCode\MyProject-master\src\main\java\model\User.java
+C:\project\CleanCode\MyProject-master\src\main\java\validator\EmailValidator.java
+C:\project\CleanCode\MyProject-master\src\main\java\util\HibernateUtil.java
+C:\project\CleanCode\MyProject-master\src\main\java\dao\interfaces\NoteDao.java
+C:\project\CleanCode\MyProject-master\src\main\java\dao\interfaces\UserDao.java
+C:\project\CleanCode\MyProject-master\src\main\java\model\base\BaseModel.java
+C:\project\CleanCode\MyProject-master\src\main\java\model\rest\RestAddNote.java
+C:\project\CleanCode\MyProject-master\src\main\java\dao\impl\UserDaoImpl.java
+C:\project\CleanCode\MyProject-master\src\main\java\model\rest\RestUpdateNote.java
+C:\project\CleanCode\MyProject-master\src\main\java\service\NoteService.java
