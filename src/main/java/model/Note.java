@@ -14,11 +14,17 @@ import javax.validation.constraints.Size;
 
 import main.java.model.base.BaseModel;
 
+/**
+ * A Note class with below fields
+ * 1. Id
+ * 2. Note Title
+ * 3. Note String
+ * 4. Note Created Time
+ * 5. Note Last Updated Date
+ * 6. User
+ * @Author shreyas patil
+ */
 public class Note extends BaseModel {
-
-	/**
-	 * @Author shreyas patil
-	 */
 	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue

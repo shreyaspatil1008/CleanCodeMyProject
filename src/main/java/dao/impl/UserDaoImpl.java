@@ -11,20 +11,18 @@ import main.java.dao.interfaces.UserDao;
 import main.java.model.User;
 import main.java.util.HibernateUtil;
 
+/**
+ * A UserDao implementation class with below operation
+ * 1. get User By Email And Password
+ * @Author shreyas patil
+ */
 public class UserDaoImpl implements UserDao{
-	
-	/**
-	 * @Author shreyas patil
-	 */
 	private Session session;
 	
-	//public methods section
 	public User getUserByEmailAndPassword(String email, String password)throws DataAccessException{
-		session = getSession();
+		session = HibernateUtil.getSession();
 		return getUserByEmailAndPasswordWithTryCatchFinally(email, password);
 	}
-
-	//private methods section
 
 	private User getUserByEmailAndPasswordWithTryCatchFinally(String email, String password) {
 		try{
@@ -36,10 +34,6 @@ public class UserDaoImpl implements UserDao{
 		}
 	}
 	
-	private DataAccessResourceFailureException returnDataAccessExceptionWithMessage(DataAccessException exception) {
-		return new DataAccessResourceFailureException(exception.getMessage());
-	}
-
 	@SuppressWarnings("unchecked")
 	private User returnValidUserOrNull(String email, String password) {
 		List<User> users = (List<User>)getQuery(email, password).list();
@@ -49,16 +43,16 @@ public class UserDaoImpl implements UserDao{
 			return null;
 		}
 	}
-	
-	private Session getSession() {
-		return HibernateUtil.getSessionFactory().openSession();
-	}
 
 	private Query getQuery(String email, String password) {
 		Query query = session.createQuery("from user where email = ? and password = ?");
 		query.setParameter(0, email);
 		query.setParameter(1, password);
 		return query;
+	}
+	
+	private DataAccessResourceFailureException returnDataAccessExceptionWithMessage(DataAccessException exception) {
+		return new DataAccessResourceFailureException(exception.getMessage());
 	}
 
 }

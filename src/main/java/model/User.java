@@ -16,13 +16,18 @@ import org.hibernate.validator.constraints.Email;
 
 import main.java.model.base.BaseModel;
 
+/**
+ * A User class with below fields
+ * 1. Id
+ * 2. User Email
+ * 3. User Password
+ * 4. User Created Time
+ * 5. User Last Updated Date
+ * 6. List of Notes
+ * @Author shreyas patil
+ */
 public class User extends BaseModel {
-
-	/**
-	 * @Author shreyas patil
-	 */
 	private static final long serialVersionUID = 1L;
-	
 	@Id
 	@GeneratedValue
 	@Column

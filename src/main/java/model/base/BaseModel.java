@@ -2,6 +2,10 @@ package main.java.model.base;
 
 import java.io.Serializable;
 
+/**
+ * This is a Base Model with id
+ * @Author shreyas patil
+ */
 public abstract class BaseModel implements Serializable{
 	
 	/**
@@ -26,6 +30,14 @@ public abstract class BaseModel implements Serializable{
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		if(id == null){
+			return 0 ;
+		}
+		return id.intValue();
 	}
 
 }

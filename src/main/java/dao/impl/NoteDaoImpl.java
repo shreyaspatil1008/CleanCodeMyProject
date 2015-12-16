@@ -14,100 +14,90 @@ import main.java.dao.interfaces.NoteDao;
 import main.java.model.Note;
 import main.java.util.HibernateUtil;
 
-public class NoteDaoImpl implements NoteDao{
-	
-	/**
-	 * @Author shreyas patil
-	 */
+/**
+ * A NoteDao implementation class with below operations
+ * 1. save note
+ * 2. get note by id
+ * 3. get all notes for user
+ * 4. update note
+ * 5. delete note
+ * @Author shreyas patil
+ */
+public class NoteDaoImpl implements NoteDao {
 	private Session session;
 	private Transaction transaction;
-	
-	//public methods section
-	public Note saveNoteAndReturnSavedNote(Note note)throws TransactionException{
-		session = getSession();
-        transaction = session.beginTransaction();
+
+	public Note saveNoteAndReturnSavedNote(Note note) throws TransactionException {
+		HibernateUtil.initializeSessionAndTransaction(session,transaction);
 		saveNote(note);
 		return note;
-    }
+	}
 
-	public Note getNoteById(Long notesId) throws DataAccessException{
-        session = getSession();
-        session.beginTransaction();
-        return getNoteByIdWithTryCatchFinally(notesId);
-    }
-
-	@SuppressWarnings("unchecked")
-	public List<Note> getAllNotesOfUser(Long userId) throws DataAccessException{
-        session = getSession();
-        try{
-            return (List<Note>)createAndReturnGetAllNotesOfUserQuery(userId).list();
-        }catch(DataAccessException exception){
-        	throw returnDataAccessExceptionWithMessage(exception);
-        }finally{
-            closeSession();
-        }
-    }
-
-	public void updateNote(Note note)throws TransactionException{
-        session = getSession();
-        transaction = session.beginTransaction();
-        updateNoteWithTryCatchFinally(note);
-    }
-
-	public void deleteNote(Note note)throws TransactionException{
-        session = getSession();
-        transaction = session.beginTransaction();
-        deleteNoteWithTryCatchFinally(note);
-    }
-
-	//private methods section
-	private void saveNote(Note note) throws TransactionException{
-		try{
-        	saveAndCommitTransaction(note);
-        }catch(TransactionException exception){
-            rollbackTransactionAndThrowException(exception);
-        }finally{
-            closeSession();
-        }
+	private void saveNote(Note note) throws TransactionException {
+		try {
+			saveAndCommitTransaction(note);
+		} catch (TransactionException exception) {
+			HibernateUtil.rollbackTransactionAndThrowException(exception,transaction);
+		} finally {
+			HibernateUtil.closeSession(session);
+		}
 	}
 
 	private void saveAndCommitTransaction(Note note) {
-		note.setId((Long)session.save(note));
+		note.setId((Long) session.save(note));
 		transaction.commit();
 	}
 
-	private Session getSession() {
-		return HibernateUtil.getSessionFactory().openSession();
+	public Note getNoteById(Long notesId) throws DataAccessException {
+		HibernateUtil.initializeSessionAndTransaction(session,transaction);
+		return getNoteByIdWithTryCatchFinally(notesId);
 	}
 
-    private Note getNoteByIdWithTryCatchFinally(Long notesId) throws DataAccessException{
-		try{
-            return (Note)session.get(Note.class,notesId);
-        }catch(DataAccessException exception){
-            throw returnDataAccessExceptionWithMessage(exception);
-        }finally{
-            closeSession();
-        }
+	private Note getNoteByIdWithTryCatchFinally(Long notesId) throws DataAccessException {
+		try {
+			return (Note) session.get(Note.class, notesId);
+		} catch (DataAccessException exception) {
+			throw returnDataAccessExceptionWithMessage(exception);
+		} finally {
+			HibernateUtil.closeSession(session);
+		}
 	}
 
 	private DataAccessResourceFailureException returnDataAccessExceptionWithMessage(DataAccessException exception) {
 		return new DataAccessResourceFailureException(exception.getMessage());
 	}
 
-    private Query createAndReturnGetAllNotesOfUserQuery(Long userId) {
+	@SuppressWarnings("unchecked")
+	public List<Note> getAllNotesOfUser(Long userId) throws DataAccessException {
+		session = HibernateUtil.getSession();
+		try {
+			return (List<Note>) createAndReturnGetAllNotesOfUserQuery(userId).list();
+		} catch (DataAccessException exception) {
+			throw returnDataAccessExceptionWithMessage(exception);
+		} finally {
+			HibernateUtil.closeSession(session);
+		}
+	}
+
+	private Query createAndReturnGetAllNotesOfUserQuery(Long userId) {
 		Query query = session.createQuery("from note where userid = ?");
-		query.setParameter(0,userId);
+		query.setParameter(0, userId);
 		return query;
 	}
 
-	private void updateNoteWithTryCatchFinally(Note note) throws TransactionException{
-		try{
-            updateAndCommitTransaction(note);
-        }catch(TransactionException exception){
-            rollbackTransactionAndThrowException(exception);
-        }finally {
-            closeSession();
-        }
+	public void updateNote(Note note) throws TransactionException {
+		HibernateUtil.initializeSessionAndTransaction(session,transaction);
+		updateNoteWithTryCatchFinally(note);
+	}
+
+	private void updateNoteWithTryCatchFinally(Note note) throws TransactionException {
+		try {
+			updateAndCommitTransaction(note);
+		} catch (TransactionException exception) {
+			HibernateUtil.rollbackTransactionAndThrowException(exception,transaction);
+		} finally {
+			HibernateUtil.closeSession(session);
+		}
 	}
 
 	private void updateAndCommitTransaction(Note note) {
@@ -115,31 +105,23 @@ public class NoteDaoImpl implements NoteDao{
 		transaction.commit();
 	}
 
-	private void rollbackTransactionAndThrowException(TransactionException exception) {
-		transaction.rollback();
-		throw returnTransactionExceptionWithMessage(exception);
+	public void deleteNote(Note note) throws TransactionException {
+		HibernateUtil.initializeSessionAndTransaction(session,transaction);
+		deleteNoteWithTryCatchFinally(note);
 	}
 
-	private UnexpectedRollbackException returnTransactionExceptionWithMessage(TransactionException exception) {
-		return new UnexpectedRollbackException(exception.getMessage());
-	}
-	
-    private void deleteNoteWithTryCatchFinally(Note note) throws TransactionException{
-		try{
-            deleteAndCommitTransaction(note);
-        }catch(TransactionException exception){
-            rollbackTransactionAndThrowException(exception);
-        }finally {
-            closeSession();
-        }
+	private void deleteNoteWithTryCatchFinally(Note note) throws TransactionException {
+		try {
+			deleteAndCommitTransaction(note);
+		} catch (TransactionException exception) {
+			HibernateUtil.rollbackTransactionAndThrowException(exception,transaction);
+		} finally {
+			HibernateUtil.closeSession(session);
+		}
 	}
 
 	private void deleteAndCommitTransaction(Note note) {
 		session.delete(note);
 		transaction.commit();
-	}
-	
-	private void closeSession() {
-		session.close();
 	}
 }

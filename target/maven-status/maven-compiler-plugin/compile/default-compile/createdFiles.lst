@@ -1,8 +1,10 @@
 main\java\model\base\BaseModel.class
+main\java\util\AuthenticationUtil.class
 main\java\dao\interfaces\UserDao.class
 main\java\model\rest\RestAddNote.class
 main\java\util\HibernateUtil.class
 main\java\model\User.class
+main\java\util\ResponseUtil.class
 main\java\dao\interfaces\NoteDao.class
 main\java\dao\impl\UserDaoImpl.class
 main\java\model\rest\RestUpdateNote.class
