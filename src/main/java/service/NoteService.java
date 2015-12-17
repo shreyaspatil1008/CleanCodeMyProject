@@ -13,15 +13,18 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.springframework.dao.DataAccessException;
+
 import main.java.dao.interfaces.NoteDao;
 import main.java.model.Note;
 import main.java.model.User;
+import main.java.model.exception.DataPersistanceException;
+import main.java.model.exception.NoteNotFoundException;
+import main.java.model.exception.UserNotFoundException;
 import main.java.model.rest.RestAddNote;
 import main.java.model.rest.RestUpdateNote;
 import main.java.util.AuthenticationUtil;
 import main.java.util.ResponseUtil;
-import main.java.validator.EmailValidator;
-import sun.misc.BASE64Decoder;
 
 /**
  * @Author shreyas patil
@@ -54,24 +57,29 @@ public class NoteService {
 	public Response getNotesByUserId(@QueryParam("userId")Long userId, @HeaderParam("authorization") String authString){
 		try{
 			return validateAndReturnResponse(userId, authString);
-		}catch(Exception e){
+		}catch(IOException e){
 			return responseUtil.buildFailureResponse("No notes with userId "+userId);
+		}catch(DataAccessException e){
+			return responseUtil.buildFailureResponse("No notes with userId "+userId);
+		}catch(UserNotFoundException e){
+			return responseUtil.buildFailureResponse(e.getMessage());
 		}
 	}
 
-	private Response validateAndReturnResponse(Long userId, String authString) {
-		if(null == userId || 0l == userId){
+	private Response validateAndReturnResponse(Long userId, String authString) 
+			throws IOException,DataAccessException,UserNotFoundException{
+		if(null == userId || 0l == userId)
 			return responseUtil.buildFailureResponse("Note Id can not be empty.");
-		}
-		return authenticateUserAndReturnResponse(userId, authString);
+		else
+			return authenticateUserAndReturnResponse(userId, authString);
 	}
 
-	private Response authenticateUserAndReturnResponse(Long userId, String authString) {
-		if(!authenticationUtil.isUserAuthenticated(authString,user) && !user.getId().equals(userId)){
+	private Response authenticateUserAndReturnResponse(Long userId, String authString) 
+			throws IOException,DataAccessException,UserNotFoundException{
+		if(!authenticationUtil.isUserAuthenticated(authString,user) && !user.getId().equals(userId))
 			return responseUtil.buildFailureResponse("User authentication unsuccessful.");
-		}else{
+		else
 			return responseUtil.buildSuccessResponse(user.getNotes());
-		}
 	}
 
 	@GET
@@ -82,22 +90,29 @@ public class NoteService {
 		
 		try{
 			return validateUserNoteAndReturnResponse(noteId, authString);
-		}catch(Exception e){
-			return responseUtil.buildFailureResponse("No notes with userId "+noteId);
+		}catch(IOException e){
+			return responseUtil.buildFailureResponse("No notes with userId "+user.getId());
+		}catch(DataAccessException e){
+			return responseUtil.buildFailureResponse("No notes with userId "+user.getId());
+		}catch(UserNotFoundException e){
+			return responseUtil.buildFailureResponse(e.getMessage());
+		}catch(NoteNotFoundException e){
+			return responseUtil.buildFailureResponse(e.getMessage());
 		}
 	}
 	
-	private Response validateUserNoteAndReturnResponse(Long noteId, String authString) {
-		if(null == noteId || 0l == noteId){
+	private Response validateUserNoteAndReturnResponse(Long noteId, String authString) 
+			throws IOException,DataAccessException,UserNotFoundException,NoteNotFoundException{
+		if(null == noteId || 0l == noteId)
 			return responseUtil.buildFailureResponse("Note Id can not be empty.");
-		}
-		if(!authenticationUtil.isUserAuthenticated(authString,user)){
+		else if(!authenticationUtil.isUserAuthenticated(authString,user))
 			return responseUtil.buildFailureResponse("User authentication unsuccessful.");
-		}
-		return validateAndReturnNotes(noteId);
+		else
+			return validateAndReturnNotes(noteId);
+		
 	}
 
-	private Response validateAndReturnNotes(Long noteId) {
+	private Response validateAndReturnNotes(Long noteId) throws NoteNotFoundException{
 		return validateNoteAndReturnResponse(findAndReturnNoteByNoteId(noteId));
 	}
 
@@ -108,16 +123,23 @@ public class NoteService {
 	public Response saveNote(RestAddNote addNote, @HeaderParam("authorization") String authString){
 		try{
 			return validateUserForAuthStringNoteIdSaveAndReturnResponse(addNote, authString);
-		}catch(Exception e){
-			return responseUtil.buildFailureResponse("Insert not successful.");
+		}catch(IOException e){
+			return responseUtil.buildFailureResponse("No notes with userId "+user.getId());
+		}catch(DataAccessException e){
+			return responseUtil.buildFailureResponse("No notes with userId "+user.getId());
+		}catch(DataPersistanceException e){
+			return responseUtil.buildFailureResponse("Insert not successful");
+		}catch(UserNotFoundException e){
+			return responseUtil.buildFailureResponse(e.getMessage());
 		}
 	}
 	
-	private Response validateUserForAuthStringNoteIdSaveAndReturnResponse(RestAddNote addNote, String authString) {
-		if(!authenticationUtil.isUserAuthenticated(authString,user)){
+	private Response validateUserForAuthStringNoteIdSaveAndReturnResponse(RestAddNote addNote, String authString)
+			throws IOException,DataAccessException,UserNotFoundException {
+		if(!authenticationUtil.isUserAuthenticated(authString,user))
 			return responseUtil.buildFailureResponse("User authentication unsuccessful.");
-		}
-		return createSaveAndReturnSavedNote(addNote);
+		else
+			return createSaveAndReturnSavedNote(addNote);
 	}
 
 	private Response createSaveAndReturnSavedNote(RestAddNote addNote) {
@@ -132,43 +154,48 @@ public class NoteService {
 	public Response updateNote(RestUpdateNote updateNote, @HeaderParam("authorization") String authString){
 		try{
 			return validateUserForAuthStringNoteIdUpdateAndReturnResponse(updateNote, authString);
-		}catch(Exception e){
-			return responseUtil.buildFailureResponse("Update not successful.");
+		}catch(IOException e){
+			return responseUtil.buildFailureResponse("No notes with userId "+user.getId());
+		}catch(DataAccessException e){
+			return responseUtil.buildFailureResponse("No notes with userId "+user.getId());
+		}catch(DataPersistanceException e){
+			return responseUtil.buildFailureResponse("Update not successful");
+		}catch(UserNotFoundException e){
+			return responseUtil.buildFailureResponse(e.getMessage());
+		}catch(NoteNotFoundException e){
+			return responseUtil.buildFailureResponse(e.getMessage());
 		}
 	}
 	
 	private Response validateUserForAuthStringNoteIdUpdateAndReturnResponse(RestUpdateNote updateNote,
-			String authString) {
-		if(null == updateNote.getId() || 0l == updateNote.getId()){
+			String authString) throws IOException,DataAccessException,UserNotFoundException,NoteNotFoundException{
+		if(null == updateNote.getId() || 0l == updateNote.getId())
 			return responseUtil.buildFailureResponse("Note Id can not be empty.");
-		}
-		
-		if(!authenticationUtil.isUserAuthenticated(authString,user)){
+		else if(!authenticationUtil.isUserAuthenticated(authString,user))
 			return responseUtil.buildFailureResponse("User authentication unsuccessful.");
-		}
-		return validateNoteUpdateAndReturnResponse(updateNote);
+		else
+			return validateNoteUpdateAndReturnResponse(updateNote);
 	}
 
-	private Response validateNoteUpdateAndReturnResponse(RestUpdateNote updateNote) {
+	private Response validateNoteUpdateAndReturnResponse(RestUpdateNote updateNote)throws NoteNotFoundException{
 		Note note = findAndReturnNote(updateNote);
 		return validateNoteUpdateAndReturnResponse(updateNote, note);
 	}
 
-	private Note findAndReturnNote(RestUpdateNote updateNote) {
+	private Note findAndReturnNote(RestUpdateNote updateNote)throws NoteNotFoundException {
 		for(Note curNote:user.getNotes()){
 			if(curNote.getId().equals(updateNote.getId())){
 				return curNote;
 			}
 		}
-		return null;
+		throw new NoteNotFoundException("Note not found for note id"+updateNote.getId());
 	}
 
 	private Response validateNoteUpdateAndReturnResponse(RestUpdateNote updateNote, Note note) {
-		if(note == null){
+		if(note == null)
 			return responseUtil.buildFailureResponse("User authentication unsuccessful.");
-		}else{
+		else
 			return fillAndUpdateNoteAndReturnResponse(updateNote, note);
-		}
 	}
 
 	private Response fillAndUpdateNoteAndReturnResponse(RestUpdateNote updateNote, Note note) {
@@ -202,51 +229,57 @@ public class NoteService {
 	public Response deleteNote(@QueryParam("noteId")Long noteId, @HeaderParam("authorization") String authString){
 		try{
 			return validateUserForAuthStringNoteIdDeleteAndReturnResponse(noteId, authString);
-		}catch(Exception e){
-			return responseUtil.buildFailureResponse("Delete not successful.");
+		}catch(IOException e){
+			return responseUtil.buildFailureResponse("No notes with userId "+user.getId());
+		}catch(DataAccessException e){
+			return responseUtil.buildFailureResponse("No notes with userId "+user.getId());
+		}catch(DataPersistanceException e){
+			return responseUtil.buildFailureResponse("Delete not successful");
+		}catch(UserNotFoundException e){
+			return responseUtil.buildFailureResponse(e.getMessage());
+		}catch(NoteNotFoundException e){
+			return responseUtil.buildFailureResponse(e.getMessage());
 		}
 	}
 	
-	private Response validateUserForAuthStringNoteIdDeleteAndReturnResponse(Long noteId, String authString) {
-		if(!authenticationUtil.isUserAuthenticated(authString,user)){
+	private Response validateUserForAuthStringNoteIdDeleteAndReturnResponse(Long noteId, String authString) 
+			throws IOException,DataAccessException,UserNotFoundException,NoteNotFoundException{
+		if(!authenticationUtil.isUserAuthenticated(authString,user))
 			return responseUtil.buildFailureResponse("User authentication unsuccessful.");
-		}
-		
-		if(null == noteId|| 0l == noteId){
+		else if(null == noteId|| 0l == noteId)
 			return responseUtil.buildFailureResponse("Note Id can not be empty.");
-		}
-		return validateAndDeleteNoteAndReturnResponse(noteId);
+		else
+			return validateAndDeleteNoteAndReturnResponse(noteId);
 	}
 
-	private Response validateAndDeleteNoteAndReturnResponse(Long noteId) {
+	private Response validateAndDeleteNoteAndReturnResponse(Long noteId)throws NoteNotFoundException {
 		Note note = findAndReturnNoteByNoteId(noteId);
 		return validateDeleteAndReturnResponseForNote(note);
 	}
 
-	private Note findAndReturnNoteByNoteId(Long noteId) {
+	private Note findAndReturnNoteByNoteId(Long noteId)throws NoteNotFoundException {
 		for(Note curNote:user.getNotes()){
 			if(curNote.getId().equals(noteId)){
 				return curNote;
 			}
 		}
-		return null;
+		throw new NoteNotFoundException("Note not found for note id"+noteId);
 	}
 
 	private Response validateDeleteAndReturnResponseForNote(Note note) {
-		if(note == null){
+		if(note == null)
 			return responseUtil.buildFailureResponse("User authentication unsuccessful.");
-		}else{
+		else{
 			noteDao.deleteNote(note);
 			return responseUtil.buildSuccessResponse(note);
 		}
 	}
 
 	private Response validateNoteAndReturnResponse(Note note) {
-		if(note == null){
+		if(note == null)
 			return responseUtil.buildFailureResponse("User authentication unsuccessful.");
-		}else{
+		else
 			return responseUtil.buildSuccessResponse(note);
-		}
 	}
 
 	private Note createAndReturnNoteToSave(RestAddNote addNote) {

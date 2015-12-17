@@ -4,7 +4,10 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
+import org.springframework.dao.DataAccessException;
+
 import main.java.model.User;
+import main.java.model.exception.UserNotFoundException;
 import main.java.validator.EmailValidator;
 import sun.misc.BASE64Decoder;
 
@@ -21,25 +24,24 @@ public class AuthenticationUtil {
 	private User user;
 
 	
-	public boolean isUserAuthenticated(String authString,User user){
+	public boolean isUserAuthenticated(String authString,User user)throws IOException,DataAccessException,UserNotFoundException{
 		this.user = user;
 		return fillAndValidateAuthParts(authString);
 	}
 
-	private boolean fillAndValidateAuthParts(String authString) {
+	private boolean fillAndValidateAuthParts(String authString)throws IOException,DataAccessException ,UserNotFoundException{
 		String[] authParts = authString.split("\\s+");
 		return validateAuthParts(authParts);
 	}
 
-	private boolean validateAuthParts(String[] authParts) {
-		if(authParts.length>1){
+	private boolean validateAuthParts(String[] authParts) throws IOException,DataAccessException,UserNotFoundException{
+		if(authParts.length>1)
 			return fillAndValidateAuthInfoWithTryCatch(authParts);
-		}else{
+		else
 			return false;	
-		}
 	}
 
-	private boolean fillAndValidateAuthInfoWithTryCatch(String[] authParts) {
+	private boolean fillAndValidateAuthInfoWithTryCatch(String[] authParts) throws IOException,DataAccessException,UserNotFoundException{
 		String authInfo = authParts[1];
 		try{
 			return fillAndValidateDecodeAuth(authInfo);
@@ -49,44 +51,41 @@ public class AuthenticationUtil {
 	}
 
 	@SuppressWarnings("restriction")
-	private boolean fillAndValidateDecodeAuth(String authInfo) throws IOException {
+	private boolean fillAndValidateDecodeAuth(String authInfo) throws IOException,DataAccessException,UserNotFoundException {
 		String decodeAuth = new String(new BASE64Decoder().decodeBuffer(authInfo));
 		return validateDecodeAuth(decodeAuth);
 	}
 
-	private boolean validateDecodeAuth(String decodeAuth) {
-		if(decodeAuth.contains(":")){
+	private boolean validateDecodeAuth(String decodeAuth) throws DataAccessException,UserNotFoundException{
+		if(decodeAuth.contains(":"))
 			return fillAndValidateAuthPart(decodeAuth);
-		}else{
+		else
 			return false;
-		}
 	}
 
-	private boolean fillAndValidateAuthPart(String decodeAuth) {
+	private boolean fillAndValidateAuthPart(String decodeAuth) throws DataAccessException,UserNotFoundException{
 		String[] authPart;
 		authPart = decodeAuth.split(":");
 		return validateAuthPart(authPart);
 	}
 
-	private boolean validateAuthPart(String[] authPart) {
-		if(authPart.length>1){
+	private boolean validateAuthPart(String[] authPart) throws DataAccessException,UserNotFoundException{
+		if(authPart.length>1)
 			return fillAndValidateUser(authPart);					
-		}else{
+		else
 			return false;
-		}
 	}
 
-	private boolean fillAndValidateUser(String[] authPart) {
+	private boolean fillAndValidateUser(String[] authPart) throws DataAccessException,UserNotFoundException{
 		user = emailValidator.findValidateAndReturnByEmailAndPasswordUser(authPart[0],authPart[1]);
 		return validateUser();
 	}
 
 	private boolean validateUser() {
-		if(null!=user){
+		if(null!=user)
 			return true;
-		}else{
+		else
 			return false;
-		}
 	}
 
 }

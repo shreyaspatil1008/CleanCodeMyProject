@@ -5,13 +5,12 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.TransactionException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
-import org.springframework.transaction.UnexpectedRollbackException;
 
 import main.java.dao.interfaces.NoteDao;
 import main.java.model.Note;
+import main.java.model.exception.DataPersistanceException;
 import main.java.util.HibernateUtil;
 
 /**
@@ -27,16 +26,16 @@ public class NoteDaoImpl implements NoteDao {
 	private Session session;
 	private Transaction transaction;
 
-	public Note saveNoteAndReturnSavedNote(Note note) throws TransactionException {
+	public Note saveNoteAndReturnSavedNote(Note note) throws DataPersistanceException {
 		HibernateUtil.initializeSessionAndTransaction(session,transaction);
 		saveNote(note);
 		return note;
 	}
 
-	private void saveNote(Note note) throws TransactionException {
+	private void saveNote(Note note) throws DataPersistanceException {
 		try {
 			saveAndCommitTransaction(note);
-		} catch (TransactionException exception) {
+		} catch (DataPersistanceException exception) {
 			HibernateUtil.rollbackTransactionAndThrowException(exception,transaction);
 		} finally {
 			HibernateUtil.closeSession(session);
@@ -85,15 +84,15 @@ public class NoteDaoImpl implements NoteDao {
 		return query;
 	}
 
-	public void updateNote(Note note) throws TransactionException {
+	public void updateNote(Note note) throws DataPersistanceException {
 		HibernateUtil.initializeSessionAndTransaction(session,transaction);
 		updateNoteWithTryCatchFinally(note);
 	}
 
-	private void updateNoteWithTryCatchFinally(Note note) throws TransactionException {
+	private void updateNoteWithTryCatchFinally(Note note) throws DataPersistanceException {
 		try {
 			updateAndCommitTransaction(note);
-		} catch (TransactionException exception) {
+		} catch (DataPersistanceException exception) {
 			HibernateUtil.rollbackTransactionAndThrowException(exception,transaction);
 		} finally {
 			HibernateUtil.closeSession(session);
@@ -105,15 +104,15 @@ public class NoteDaoImpl implements NoteDao {
 		transaction.commit();
 	}
 
-	public void deleteNote(Note note) throws TransactionException {
+	public void deleteNote(Note note) throws DataPersistanceException {
 		HibernateUtil.initializeSessionAndTransaction(session,transaction);
 		deleteNoteWithTryCatchFinally(note);
 	}
 
-	private void deleteNoteWithTryCatchFinally(Note note) throws TransactionException {
+	private void deleteNoteWithTryCatchFinally(Note note) throws DataPersistanceException {
 		try {
 			deleteAndCommitTransaction(note);
-		} catch (TransactionException exception) {
+		} catch (DataPersistanceException exception) {
 			HibernateUtil.rollbackTransactionAndThrowException(exception,transaction);
 		} finally {
 			HibernateUtil.closeSession(session);

@@ -9,6 +9,7 @@ import org.springframework.dao.DataAccessResourceFailureException;
 
 import main.java.dao.interfaces.UserDao;
 import main.java.model.User;
+import main.java.model.exception.UserNotFoundException;
 import main.java.util.HibernateUtil;
 
 /**
@@ -19,29 +20,30 @@ import main.java.util.HibernateUtil;
 public class UserDaoImpl implements UserDao{
 	private Session session;
 	
-	public User getUserByEmailAndPassword(String email, String password)throws DataAccessException{
+	public User getUserByEmailAndPassword(String email, String password)throws DataAccessException,UserNotFoundException{
 		session = HibernateUtil.getSession();
 		return getUserByEmailAndPasswordWithTryCatchFinally(email, password);
 	}
 
-	private User getUserByEmailAndPasswordWithTryCatchFinally(String email, String password) {
+	private User getUserByEmailAndPasswordWithTryCatchFinally(String email, String password)throws DataAccessException,UserNotFoundException {
 		try{
-			return returnValidUserOrNull(email, password);
-		}catch(DataAccessException exception){
+			return returnValidUserOrThrowException(email, password);
+		}catch(UserNotFoundException exception){
+            throw exception;
+        }catch(DataAccessException exception){
             throw returnDataAccessExceptionWithMessage(exception);
         }finally{
-			session.close();
+			HibernateUtil.closeSession(session);
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
-	private User returnValidUserOrNull(String email, String password) {
+	private User returnValidUserOrThrowException(String email, String password) throws UserNotFoundException{
 		List<User> users = (List<User>)getQuery(email, password).list();
-		if(!users.isEmpty()){
+		if(!users.isEmpty())
 			return users.get(0);
-		}else{
-			return null;
-		}
+		else
+			throw new UserNotFoundException("User not found.");
 	}
 
 	private Query getQuery(String email, String password) {

@@ -24,20 +24,19 @@ public abstract class BaseModel implements Serializable{
 	
 	@Override
 	public boolean equals(Object obj) {
-		if(null != obj &&
-				obj instanceof BaseModel &&
-					((BaseModel)obj).getId().equals(this.id)){
+		if(null != obj && obj instanceof BaseModel && 
+				((BaseModel)obj).getId().equals(this.id))
 			return true;
-		}
-		return false;
+		else
+			return false;
 	}
 	
 	@Override
 	public int hashCode() {
-		if(id == null){
+		if(id == null)
 			return 0 ;
-		}
-		return id.intValue();
+		else
+			return id.intValue();
 	}
 
 }
