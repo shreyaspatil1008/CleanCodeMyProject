@@ -1,5 +1,7 @@
 package main.java.util;
 
+import javax.inject.Named;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -18,6 +20,7 @@ import org.springframework.transaction.UnexpectedRollbackException;
  * 5. Throw UnexpectedRollbackException
  * @Author shreyas patil
  */
+@Named
 public class HibernateUtil {
 	private static SessionFactory sessionFactory = buildAndReturnSessionFactoryWithTryCatch();
 	

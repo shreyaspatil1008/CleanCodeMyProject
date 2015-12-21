@@ -1,5 +1,7 @@
 package main.java.model.rest;
 
+import javax.inject.Named;
+
 /**
  * This is Rest Model for Note Update Service with below attributes
  * 1. Id
@@ -7,6 +9,7 @@ package main.java.model.rest;
  * 3. Note String
  * @Author shreyas patil
  */
+@Named
 public class RestUpdateNote {
 	/**
 	 * @Author shreyas patil

@@ -26,5 +26,10 @@ ENGINE=InnoDB;
 
 insert into user values
 (1,'shreyas.patil@gmail.com','test@1234','2015-11-08 08:40:10',null),
-(1,'kavya.keerthi@gmail.com','test@1234','2015-11-08 08:41:10',null),
-(1,'shan.patil@gmail.com','test@1234','2015-11-08 08:42:10',null);
+(2,'kavya.keerthi@gmail.com','test@1234','2015-11-08 08:41:10',null),
+(3,'shan.patil@gmail.com','test@1234','2015-11-08 08:42:10',null);
+
+insert into note values
+(1,'noteOne','noteOne','2015-11-08 08:40:10',null,1),
+(2,'noteTwo','noteTwo','2015-11-08 08:41:10',null,2),
+(3,'noteThree','noteThree','2015-11-08 08:42:10',null,3);

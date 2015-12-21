@@ -3,6 +3,7 @@ package main.java.model;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Named;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -26,6 +27,7 @@ import main.java.model.base.BaseModel;
  * 6. List of Notes
  * @Author shreyas patil
  */
+@Named
 public class User extends BaseModel {
 	private static final long serialVersionUID = 1L;
 	@Id

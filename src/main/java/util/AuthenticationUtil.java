@@ -3,6 +3,7 @@ package main.java.util;
 import java.io.IOException;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.springframework.dao.DataAccessException;
 
@@ -17,6 +18,7 @@ import sun.misc.BASE64Decoder;
  * 2. Authenticate user
  * @Author shreyas patil
  */
+@Named
 public class AuthenticationUtil {
 	@Inject
 	private EmailValidator emailValidator;

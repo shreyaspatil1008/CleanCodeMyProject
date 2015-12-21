@@ -2,6 +2,8 @@ package main.java.dao.impl;
 
 import java.util.List;
 
+import javax.inject.Named;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.dao.DataAccessException;
@@ -17,6 +19,7 @@ import main.java.util.HibernateUtil;
  * 1. get User By Email And Password
  * @Author shreyas patil
  */
+@Named
 public class UserDaoImpl implements UserDao{
 	private Session session;
 	

@@ -1,11 +1,14 @@
 package main.java.model.rest;
 
+import javax.inject.Named;
+
 /**
  * This is Rest Model for Note Add Service with below attributes
  * 1. Note Title
  * 2. Note String
  * @Author shreyas patil
  */
+@Named
 public class RestAddNote {
 	/**
 	 * @Author shreyas patil

@@ -2,6 +2,8 @@ package main.java.dao.impl;
 
 import java.util.List;
 
+import javax.inject.Named;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -22,6 +24,7 @@ import main.java.util.HibernateUtil;
  * 5. delete note
  * @Author shreyas patil
  */
+@Named
 public class NoteDaoImpl implements NoteDao {
 	private Session session;
 	private Transaction transaction;
