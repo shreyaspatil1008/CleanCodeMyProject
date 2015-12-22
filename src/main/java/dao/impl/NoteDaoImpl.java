@@ -87,9 +87,10 @@ public class NoteDaoImpl implements NoteDao {
 		return query;
 	}
 
-	public void updateNote(Note note) throws DataPersistanceException {
+	public Note updateAndReturnNote(Note note) throws DataPersistanceException {
 		HibernateUtil.initializeSessionAndTransaction(session,transaction);
 		updateNoteWithTryCatchFinally(note);
+		return note;
 	}
 
 	private void updateNoteWithTryCatchFinally(Note note) throws DataPersistanceException {
@@ -107,9 +108,10 @@ public class NoteDaoImpl implements NoteDao {
 		transaction.commit();
 	}
 
-	public void deleteNote(Note note) throws DataPersistanceException {
+	public Note deleteAndReturnNote(Note note) throws DataPersistanceException {
 		HibernateUtil.initializeSessionAndTransaction(session,transaction);
 		deleteNoteWithTryCatchFinally(note);
+		return note;
 	}
 
 	private void deleteNoteWithTryCatchFinally(Note note) throws DataPersistanceException {

@@ -20,7 +20,6 @@ public interface NoteDao {
 	Note saveNoteAndReturnSavedNote(Note note) throws DataPersistanceException ;
     Note getNoteById(Long notesId) throws DataAccessException ;
     List<Note> getAllNotesOfUser(Long userId) throws DataAccessException ;
-    void updateNote(Note note) throws DataPersistanceException ;
-    void deleteNote(Note note) throws DataPersistanceException ;
-
+    Note updateAndReturnNote(Note note) throws DataPersistanceException ;
+    Note deleteAndReturnNote(Note note) throws DataPersistanceException ;
 }

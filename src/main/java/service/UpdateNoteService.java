@@ -94,7 +94,7 @@ public class UpdateNoteService {
 
 	private Response fillAndUpdateNoteAndReturnResponse(RestUpdateNote updateNote, Note note) {
 		fillNoteWithNoteStringNoteTitleNoteLastUpdatedTime(updateNote, note);
-		noteDao.updateNote(note);
+		noteDao.updateAndReturnNote(note);
 		return responseUtil.buildSuccessResponse(note);
 	}
 

@@ -6,8 +6,6 @@ import javax.inject.Named;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DataAccessResourceFailureException;
 
 import main.java.dao.interfaces.UserDao;
 import main.java.model.User;
@@ -23,18 +21,16 @@ import main.java.util.HibernateUtil;
 public class UserDaoImpl implements UserDao{
 	private Session session;
 	
-	public User getUserByEmailAndPassword(String email, String password)throws DataAccessException,UserNotFoundException{
+	public User getUserByEmailAndPassword(String email, String password)throws UserNotFoundException{
 		session = HibernateUtil.getSession();
 		return getUserByEmailAndPasswordWithTryCatchFinally(email, password);
 	}
 
-	private User getUserByEmailAndPasswordWithTryCatchFinally(String email, String password)throws DataAccessException,UserNotFoundException {
+	private User getUserByEmailAndPasswordWithTryCatchFinally(String email, String password)throws UserNotFoundException {
 		try{
 			return returnValidUserOrThrowException(email, password);
 		}catch(UserNotFoundException exception){
             throw exception;
-        }catch(DataAccessException exception){
-            throw returnDataAccessExceptionWithMessage(exception);
         }finally{
 			HibernateUtil.closeSession(session);
 		}
@@ -54,10 +50,6 @@ public class UserDaoImpl implements UserDao{
 		query.setParameter(0, email);
 		query.setParameter(1, password);
 		return query;
-	}
-	
-	private DataAccessResourceFailureException returnDataAccessExceptionWithMessage(DataAccessException exception) {
-		return new DataAccessResourceFailureException(exception.getMessage());
 	}
 
 }

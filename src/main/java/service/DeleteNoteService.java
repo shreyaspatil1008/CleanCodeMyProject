@@ -90,7 +90,7 @@ public class DeleteNoteService {
 		if(note == null)
 			return responseUtil.buildFailureResponse("User authentication unsuccessful.");
 		else{
-			noteDao.deleteNote(note);
+			noteDao.deleteAndReturnNote(note);
 			return responseUtil.buildSuccessResponse(note);
 		}
 	}

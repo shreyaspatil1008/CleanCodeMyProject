@@ -2,13 +2,10 @@ package main.java.model.base;
 
 import java.io.Serializable;
 
-import javax.inject.Named;
-
 /**
  * This is a Base Model with id
  * @Author shreyas patil
  */
-@Named
 public abstract class BaseModel implements Serializable{
 	
 	/**
