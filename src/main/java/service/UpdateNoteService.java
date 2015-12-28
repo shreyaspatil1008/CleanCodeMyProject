@@ -15,12 +15,12 @@ import javax.ws.rs.core.Response;
 import org.springframework.dao.DataAccessException;
 
 import main.java.dao.interfaces.NoteDao;
+import main.java.dto.rest.RestUpdateNoteDto;
 import main.java.model.Note;
 import main.java.model.User;
 import main.java.model.exception.DataPersistanceException;
 import main.java.model.exception.NoteNotFoundException;
 import main.java.model.exception.UserNotFoundException;
-import main.java.model.rest.RestUpdateNote;
 import main.java.util.AuthenticationUtil;
 import main.java.util.ResponseUtil;
 
@@ -45,7 +45,7 @@ public class UpdateNoteService {
 	@Path("/update")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response updateNote(RestUpdateNote updateNote, @HeaderParam("authorization") String authString){
+	public Response updateNote(RestUpdateNoteDto updateNote, @HeaderParam("authorization") String authString){
 		try{
 			return validateUserForAuthStringNoteIdUpdateAndReturnResponse(updateNote, authString);
 		}catch(IOException e){
@@ -61,9 +61,9 @@ public class UpdateNoteService {
 		}
 	}
 	
-	private Response validateUserForAuthStringNoteIdUpdateAndReturnResponse(RestUpdateNote updateNote,
+	private Response validateUserForAuthStringNoteIdUpdateAndReturnResponse(RestUpdateNoteDto updateNote,
 			String authString) throws IOException,DataAccessException,UserNotFoundException,NoteNotFoundException{
-		if(null == updateNote.getId() || 0l == updateNote.getId())
+		if(null == updateNote.id || 0l == updateNote.id)
 			return responseUtil.buildFailureResponse("Note Id can not be empty.");
 		else if(!authenticationUtil.isUserAuthenticated(authString,user))
 			return responseUtil.buildFailureResponse("User authentication unsuccessful.");
@@ -71,48 +71,48 @@ public class UpdateNoteService {
 			return validateNoteUpdateAndReturnResponse(updateNote);
 	}
 
-	private Response validateNoteUpdateAndReturnResponse(RestUpdateNote updateNote)throws NoteNotFoundException{
+	private Response validateNoteUpdateAndReturnResponse(RestUpdateNoteDto updateNote)throws NoteNotFoundException{
 		Note note = findAndReturnNote(updateNote);
 		return validateNoteUpdateAndReturnResponse(updateNote, note);
 	}
 
-	private Note findAndReturnNote(RestUpdateNote updateNote)throws NoteNotFoundException {
+	private Note findAndReturnNote(RestUpdateNoteDto updateNote)throws NoteNotFoundException {
 		for(Note curNote:user.getNotes()){
-			if(curNote.getId().equals(updateNote.getId())){
+			if(curNote.getId().equals(updateNote.id)){
 				return curNote;
 			}
 		}
-		throw new NoteNotFoundException("Note not found for note id"+updateNote.getId());
+		throw new NoteNotFoundException("Note not found for note id"+updateNote.id);
 	}
 
-	private Response validateNoteUpdateAndReturnResponse(RestUpdateNote updateNote, Note note) {
+	private Response validateNoteUpdateAndReturnResponse(RestUpdateNoteDto updateNote, Note note) {
 		if(note == null)
 			return responseUtil.buildFailureResponse("User authentication unsuccessful.");
 		else
 			return fillAndUpdateNoteAndReturnResponse(updateNote, note);
 	}
 
-	private Response fillAndUpdateNoteAndReturnResponse(RestUpdateNote updateNote, Note note) {
+	private Response fillAndUpdateNoteAndReturnResponse(RestUpdateNoteDto updateNote, Note note) {
 		fillNoteWithNoteStringNoteTitleNoteLastUpdatedTime(updateNote, note);
 		noteDao.updateAndReturnNote(note);
 		return responseUtil.buildSuccessResponse(note);
 	}
 
-	private void fillNoteWithNoteStringNoteTitleNoteLastUpdatedTime(RestUpdateNote updateNote, Note note) {
+	private void fillNoteWithNoteStringNoteTitleNoteLastUpdatedTime(RestUpdateNoteDto updateNote, Note note) {
 		fillNoteWithNoteString(updateNote, note);
 		fillNoteWithNoteTitle(updateNote, note);
 		note.setNoteLastUpdatedTime(new Date());
 	}
 
-	private void fillNoteWithNoteTitle(RestUpdateNote updateNote, Note note) {
-		if(null != updateNote.getNoteTitle() && updateNote.getNoteTitle().isEmpty()){
-			note.setNoteTitle(updateNote.getNoteTitle());
+	private void fillNoteWithNoteTitle(RestUpdateNoteDto updateNote, Note note) {
+		if(null != updateNote.noteTitle && updateNote.noteTitle.isEmpty()){
+			note.setNoteTitle(updateNote.noteTitle);
 		}
 	}
 
-	private void fillNoteWithNoteString(RestUpdateNote updateNote, Note note) {
-		if(null != updateNote.getNoteString() && updateNote.getNoteString().isEmpty()){
-			note.setNoteString(updateNote.getNoteString());
+	private void fillNoteWithNoteString(RestUpdateNoteDto updateNote, Note note) {
+		if(null != updateNote.noteString && updateNote.noteString.isEmpty()){
+			note.setNoteString(updateNote.noteString);
 		}
 	}
 }

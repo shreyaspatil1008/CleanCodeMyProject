@@ -6,7 +6,7 @@ C:\project\CleanCode\MyProject-master\src\main\java\model\Note.java
 C:\project\CleanCode\MyProject-master\src\main\java\dao\test\TestGetAllNotesOfUser.java
 C:\project\CleanCode\MyProject-master\src\main\java\validator\EmailValidator.java
 C:\project\CleanCode\MyProject-master\src\main\java\model\base\BaseModel.java
-C:\project\CleanCode\MyProject-master\src\main\java\model\rest\RestAddNote.java
+C:\project\CleanCode\MyProject-master\src\main\java\dto\rest\RestAddNoteDto.java
 C:\project\CleanCode\MyProject-master\src\main\java\service\SaveNoteService.java
 C:\project\CleanCode\MyProject-master\src\main\java\model\exception\UserNotFoundException.java
 C:\project\CleanCode\MyProject-master\src\main\java\dao\test\TestUpdateNote.java
@@ -16,7 +16,7 @@ C:\project\CleanCode\MyProject-master\src\main\java\util\AuthenticationUtil.java
 C:\project\CleanCode\MyProject-master\src\main\java\util\ResponseUtil.java
 C:\project\CleanCode\MyProject-master\src\main\java\util\HibernateUtil.java
 C:\project\CleanCode\MyProject-master\src\main\java\dao\test\TestSaveNote.java
-C:\project\CleanCode\MyProject-master\src\main\java\model\rest\RestUpdateNote.java
+C:\project\CleanCode\MyProject-master\src\main\java\dto\rest\RestUpdateNoteDto.java
 C:\project\CleanCode\MyProject-master\src\main\java\service\RetrieveNoteService.java
 C:\project\CleanCode\MyProject-master\src\main\java\dao\interfaces\NoteDao.java
 C:\project\CleanCode\MyProject-master\src\main\java\dao\interfaces\UserDao.java

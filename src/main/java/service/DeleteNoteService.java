@@ -16,12 +16,12 @@ import javax.ws.rs.core.Response;
 import org.springframework.dao.DataAccessException;
 
 import main.java.dao.interfaces.NoteDao;
+import main.java.dto.rest.RestAddNoteDto;
 import main.java.model.Note;
 import main.java.model.User;
 import main.java.model.exception.DataPersistanceException;
 import main.java.model.exception.NoteNotFoundException;
 import main.java.model.exception.UserNotFoundException;
-import main.java.model.rest.RestAddNote;
 import main.java.util.AuthenticationUtil;
 import main.java.util.ResponseUtil;
 
@@ -102,27 +102,27 @@ public class DeleteNoteService {
 			return responseUtil.buildSuccessResponse(note);
 	}
 
-	private Note createAndReturnNoteToSave(RestAddNote addNote) {
+	private Note createAndReturnNoteToSave(RestAddNoteDto addNote) {
 		Note note = new Note();
 		fillNoteWithNoteStringNoteTitleNoteCreatedDate(addNote, note);
 		return note;
 	}
 
-	private void fillNoteWithNoteStringNoteTitleNoteCreatedDate(RestAddNote addNote, Note note) {
+	private void fillNoteWithNoteStringNoteTitleNoteCreatedDate(RestAddNoteDto addNote, Note note) {
 		validateAndSetNoteString(addNote, note);
 		validateAndSetNoteTitle(addNote, note);
 		note.setNoteCreatedTime(new Date());
 	}
 
-	private void validateAndSetNoteTitle(RestAddNote addNote, Note note) {
-		if(null != addNote.getNoteTitle() && addNote.getNoteTitle().isEmpty()){
-			note.setNoteTitle(addNote.getNoteTitle());
+	private void validateAndSetNoteTitle(RestAddNoteDto addNote, Note note) {
+		if(null != addNote.noteTitle && addNote.noteTitle.isEmpty()){
+			note.setNoteTitle(addNote.noteTitle);
 		}
 	}
 
-	private void validateAndSetNoteString(RestAddNote addNote, Note note) {
-		if(null != addNote.getNoteString() && addNote.getNoteString().isEmpty()){
-			note.setNoteString(addNote.getNoteString());
+	private void validateAndSetNoteString(RestAddNoteDto addNote, Note note) {
+		if(null != addNote.noteString && addNote.noteString.isEmpty()){
+			note.setNoteString(addNote.noteString);
 		}
 	}
 }
